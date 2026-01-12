@@ -35,6 +35,8 @@ class CodeWriter():
 
     def writePushPop(self,command,segment,index):
         if segment=="constant":
+            if index in ["0","1"]:
+                return f"@SP\nM=M+1\nA=M-1\nM={index}\n"
             return f"@{index}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment=="static":
             if command=="push":
@@ -52,6 +54,8 @@ class CodeWriter():
                     return f"@{d[segment]}\nD=M\n@{index}\nA=A+D\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
             if command=="pop":
                 if segment in ["pointer","temp"]:
+                    if segment=="temp" and index==0:
+                        return f"@SP\nM=M-1\n"
                     return f"@SP\nAM=M-1\nD=M\n@{int(index)+int(d[segment])}\nM=D\n"
                 
                 if int(index)==0:
